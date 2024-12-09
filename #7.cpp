@@ -5,6 +5,10 @@
 #include <algorithm>
 #include <ctime>
 #include <cstdlib>
+#include <locale>
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 using namespace std;
 
@@ -79,6 +83,12 @@ void rysuj_wisielca(int bledy) {
 
 // G³ówna funkcja gry
 void gra_wisielec() {
+#ifdef _WIN32
+    SetConsoleOutputCP(CP_UTF8);
+#endif
+
+    setlocale(LC_ALL, ""); 
+
     vector<string> slowa = wczytaj_slowa("slowa.txt");
     vector<pair<string, int>> wyniki = wczytaj_wyniki("wyniki.txt");
 
@@ -96,24 +106,28 @@ void gra_wisielec() {
     time_t start_czasu = time(nullptr);
 
     while (bledy < 7 && ukryte_haslo != haslo) {
-        cout << "\nAktualne has³o: " << ukryte_haslo << endl;
+        cout << "\nAktualne has³o: ";
+        for (size_t i = 0; i < ukryte_haslo.size(); ++i) {
+            cout << ukryte_haslo[i] << ' ';
+        }
+        cout << endl;
+
         rysuj_wisielca(bledy);
 
         cout << "Podaj literê: ";
-        char litera;
+        string litera;
         cin >> litera;
 
-        if (!isalpha(litera)) {
+        if (litera.size() != 1) {
             cout << "Podaj jedn¹ literê!" << endl;
             continue;
         }
 
-        litera = tolower(litera);
         bool trafiona = false;
 
         for (size_t i = 0; i < haslo.size(); ++i) {
-            if (haslo[i] == litera && ukryte_haslo[i] == '_') {
-                ukryte_haslo[i] = litera;
+            if (haslo[i] == litera[0] && ukryte_haslo[i] == '_') {
+                ukryte_haslo[i] = haslo[i];
                 trafiona = true;
             }
         }
@@ -145,6 +159,10 @@ void gra_wisielec() {
 }
 
 int main() {
+#ifdef _WIN32
+    SetConsoleOutputCP(CP_UTF8);
+#endif
+
     gra_wisielec();
     return 0;
 }

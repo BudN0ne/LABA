@@ -1,1 +1,4 @@
 Ola;-15
+Kamil;-10
+Bartek;-5
+Wojtek;25
